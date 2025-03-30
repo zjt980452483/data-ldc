@@ -1,5 +1,6 @@
 package com.hsbc.udm.data_ldc.controller;
 
+import com.hsbc.udm.data_ldc.entity.UserInfoEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,8 +29,8 @@ public class UserInfoController {
      * @return 用户信息
      */
     @GetMapping("/userinfo")
-    public ResponseEntity<Object> getUserInfo() {
-        Object userInfo = userInfoService.getUserInfo();
+    public ResponseEntity<UserInfoEntity> getUserInfo() {
+        UserInfoEntity userInfo = userInfoService.getUserInfo();
         return ResponseEntity.ok(userInfo);
     }
 } 
