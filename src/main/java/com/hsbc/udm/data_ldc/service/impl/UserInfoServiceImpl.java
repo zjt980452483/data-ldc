@@ -5,10 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import com.hsbc.udm.data_ldc.config.ApiConfig;
 import com.hsbc.udm.data_ldc.service.UserInfoService;
+import com.hsbc.udm.data_ldc.exception.ExternalApiException;
 
 /**
  * 用户信息服务实现类
@@ -34,9 +38,18 @@ public class UserInfoServiceImpl implements UserInfoService {
             ResponseEntity<Object> response = restTemplate.getForEntity(USER_INFO_URL, Object.class);
             logger.info("Successfully fetched user information");
             return response.getBody();
+        } catch (HttpClientErrorException ex) {
+            logger.error("Client error when calling external API: {}", ex.getMessage(), ex);
+            throw ex; // 直接抛出，让全局异常处理器处理
+        } catch (HttpServerErrorException ex) {
+            logger.error("Server error when calling external API: {}", ex.getMessage(), ex);
+            throw ex; // 直接抛出，让全局异常处理器处理
+        } catch (ResourceAccessException ex) {
+            logger.error("Connection error when calling external API: {}", ex.getMessage(), ex);
+            throw ex; // 直接抛出，让全局异常处理器处理
         } catch (Exception e) {
-            logger.error("Error fetching user information", e);
-            throw new RuntimeException("Failed to fetch user information", e);
+            logger.error("Unexpected error fetching user information: {}", e.getMessage(), e);
+            throw new ExternalApiException("Failed to fetch user information: " + e.getMessage(), e);
         }
     }
 

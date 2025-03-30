@@ -29,13 +29,24 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, ex.getStatusCode());
     }
     
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Object> handleRuntimeException(RuntimeException ex) {
+        logger.error("Runtime exception occurred", ex);
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        body.put("error", "Internal Server Error");
+        body.put("message", "An error occurred: " + ex.getMessage());
+        
+        return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    
     @ExceptionHandler(HttpServerErrorException.class)
     public ResponseEntity<Object> handleHttpServerErrorException(HttpServerErrorException ex) {
         logger.error("Server error when calling external API", ex);
         Map<String, Object> body = new HashMap<>();
         body.put("status", ex.getStatusCode().value());
         body.put("error", ex.getStatusText());
-        body.put("message", "External API server error: " + ex.getMessage());
+        body.put("message", "External API server error");
         
         return new ResponseEntity<>(body, ex.getStatusCode());
     }
@@ -46,7 +57,7 @@ public class GlobalExceptionHandler {
         Map<String, Object> body = new HashMap<>();
         body.put("status", HttpStatus.SERVICE_UNAVAILABLE.value());
         body.put("error", "Service Unavailable");
-        body.put("message", "Could not connect to external API: " + ex.getMessage());
+        body.put("message", "Could not connect to external API" );
         
         return new ResponseEntity<>(body, HttpStatus.SERVICE_UNAVAILABLE);
     }
@@ -57,7 +68,7 @@ public class GlobalExceptionHandler {
         Map<String, Object> body = new HashMap<>();
         body.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
         body.put("error", "Internal Server Error");
-        body.put("message", "An unexpected error occurred: " + ex.getMessage());
+        body.put("message", "An unexpected error occurred");
         
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
