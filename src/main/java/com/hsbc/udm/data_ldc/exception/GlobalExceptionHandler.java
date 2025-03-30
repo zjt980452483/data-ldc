@@ -40,6 +40,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.INTERNAL_SERVER_ERROR);
     }
     
+    @ExceptionHandler(ExternalApiException.class)
+    public ResponseEntity<Object> handleExternalApiException(ExternalApiException ex) {
+        logger.error("External API exception occurred", ex);
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", HttpStatus.BAD_GATEWAY.value());
+        body.put("error", "Bad Gateway");
+        body.put("message", "External API error");
+        
+        return new ResponseEntity<>(body, HttpStatus.BAD_GATEWAY);
+    }
+    
     @ExceptionHandler(HttpServerErrorException.class)
     public ResponseEntity<Object> handleHttpServerErrorException(HttpServerErrorException ex) {
         logger.error("Server error when calling external API", ex);
@@ -57,7 +68,7 @@ public class GlobalExceptionHandler {
         Map<String, Object> body = new HashMap<>();
         body.put("status", HttpStatus.SERVICE_UNAVAILABLE.value());
         body.put("error", "Service Unavailable");
-        body.put("message", "Could not connect to external API" );
+        body.put("message", "Could not connect to external API");
         
         return new ResponseEntity<>(body, HttpStatus.SERVICE_UNAVAILABLE);
     }
