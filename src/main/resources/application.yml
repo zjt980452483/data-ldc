@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: data-ldc
+  datasource:
+    url: jdbc:postgresql://localhost:5432/udm
+    username: postgres
+    password: 421126
+    driver-class-name: org.postgresql.Driver
+
+server:
+  port: 8080
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+
+# 自定义配置
+api:
+  user-info-url: http://127.0.0.1:9090/api/userInfo 
